@@ -1,0 +1,111 @@
+---
+harbor_configuration:
+  core:
+    enabled: true
+    properties:
+      _version: "{{ harbor_version_config }}"
+      hostname: "{{ harbor_hostname }}"
+      external_url: "{{ harbor_external_url }}"
+      http:
+        port: "{{ harbor_http_port }}"
+      harbor_admin_password: "{{ harbor_admin_password }}"
+      data_volume: "{{ harbor_data_volume }}"
+  storage_service:
+    enabled: true
+    properties:
+      storage_service:
+        cache:
+          layerinfo: "{{ harbor_storage_service_cache_layerinfo }}"
+        delete:
+          enabled: "{{ harbor_storage_service_delete_enabled }}"
+        maintenance:
+          uploadpurging:
+            age: "{{ harbor_storage_service_maintenance_uploadpurging_age }}"
+            dryrun: "{{ harbor_storage_service_maintenance_uploadpurging_dryrun }}"
+            enabled: "{{ harbor_storage_service_maintenance_uploadpurging_enabled }}"
+            internal: "{{ harbor_storage_service_maintenance_uploadpurging_internal }}"
+        redirect:
+          disable: "{{ harbor_storage_service_redirect_disable }}"
+        s3:
+          accesskey: "{{ harbor_storage_service_s3_accesskey }}"
+          bucket: "{{ harbor_storage_service_s3_bucket }}"
+          chunksize: "{{ harbor_storage_service_s3_chunksize }}"
+          multipartcopychunksize: "{{ harbor_storage_service_s3_multipartcopychunksize }}"
+          multipartcopymaxconcurrency: "{{ harbor_storage_service_s3_multipartcopymaxconcurrency }}"
+          multipartcopythresholdsize: "{{ harbor_storage_service_s3_multipartcopythresholdsize }}"
+          region: "{{ harbor_storage_service_s3_region }}"
+          secretkey: "{{ harbor_storage_service_s3_secretkey }}"
+          secure: "{{ harbor_storage_service_s3_secure }}"
+  jobservice:
+    enabled: true
+    properties:
+      jobservice:
+        logger_sweeper_duration: "{{ harbor_jobservice_logger_sweeper_duration }}"
+        max_job_workers: "{{ harbor_jobservice_max_job_workers }}"
+  notification:
+    enabled: true
+    properties:
+      notification:
+        webhook_job_http_client_timeout: "{{ harbor_notification_webhook_job_http_client_timeout }}"
+        webhook_job_max_retry: "{{ harbor_notification_webhook_job_max_retry }}"
+  log:
+    enabled: true
+    properties:
+      log:
+        level: "{{ harbor_log_level }}"
+        local:
+          location: "{{ harbor_log_local_location }}"
+          rotate_count: "{{ harbor_log_local_rotate_count }}"
+          rotate_size: "{{ harbor_log_local_rotate_size }}"
+  external_database:
+    enabled: "{{ harbor_external_database_enabled }}"
+    properties:
+      external_database:
+        harbor:
+          db_name: "{{ harbor_external_database_harbor_db_name }}"
+          host: "{{ harbor_external_database_harbor_host }}"
+          max_idle_conns: "{{ harbor_external_database_harbor_max_idle_conns }}"
+          max_open_conns: "{{ harbor_external_database_harbor_max_open_conns | default('900') }}"
+          password: "{{ harbor_external_database_harbor_password }}"
+          port: "{{ harbor_external_database_harbor_port }}"
+          ssl_mode: "{{ harbor_external_database_harbor_ssl_mode }}"
+          username: "{{ harbor_external_database_harbor_username }}"
+  external_redis:
+    enabled: "{{ harbor_external_redis_enabled }}"
+    properties:
+      external_redis:
+        host: "{{ harbor_external_redis_host }}"
+        jobservice_db_index: "{{ harbor_external_redis_jobservice_db_index }}"
+        registry_db_index: "{{ harbor_external_redis_registry_db_index }}"
+  proxy:
+    enabled: true
+    properties:
+      proxy:
+        components: "{{ harbor_proxy_components }}"
+        http_proxy: "{{ harbor_proxy_http_proxy }}"
+        https_proxy: "{{ harbor_proxy_https_proxy }}"
+        no_proxy: "{{ harbor_proxy_no_proxy }}"
+  metric:
+    enabled: "{{ harbor_metric_enabled }}"
+    properties:
+      metric:
+        enabled: "{{ harbor_metric_enabled }}"
+        path: "{{ harbor_metric_path }}"
+        port: "{{ harbor_metric_port }}"
+  upload_purgin:
+    enabled: "{{ harbor_upload_purgin_enabled }}"
+    properties:
+      upload_purgin:
+        age: "{{ harbor_upload_purgin_age }}"
+        dryrun: "{{ harbor_upload_purgin_dryrun }}"
+        enabled: "{{ harbor_upload_purgin_enabled }}"
+        interval: "{{ harbor_upload_purgin_interval }}"
+  cache:
+    enabled: "{{ harbor_cache_enabled }}"
+    properties:
+      cache:
+        enabled: "{{ harbor_cache_enabled }}"
+        expire_hours: "{{ harbor_cache_expire_hours }}"
+
+harbor_combined_configuration: "{{ harbor_configuration | combine_properties }}"
+harbor_final_configuration: "{{ harbor_combined_configuration | combine(harbor_custom_properties, recursive=True) }}"

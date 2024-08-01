@@ -1,0 +1,106 @@
+---
+###
+# GENERAL
+#
+harbor_version_release: 2.8.2
+harbor_version_config: 2.8.0
+harbor_installation_dir: /etc/harbor
+harbor_http_port: 80
+harbor_admin_password: 'myawesomepassword'
+harbor_data_volume: /data
+harbor_user: root
+
+##
+# STORAGE SERVICE
+#
+harbor_storage_service_cache_layerinfo: redis
+harbor_storage_service_delete_enabled: true
+harbor_storage_service_maintenance_uploadpurging_age: 168h
+harbor_storage_service_maintenance_uploadpurging_dryrun: false
+harbor_storage_service_maintenance_uploadpurging_enabled: 24h
+harbor_storage_service_maintenance_uploadpurging_internal: true
+harbor_storage_service_redirect_disable: false
+harbor_storage_service_s3_accesskey: ''
+harbor_storage_service_s3_bucket: ''
+harbor_storage_service_s3_chunksize: 5242880
+harbor_storage_service_s3_multipartcopychunksize: 33554432
+harbor_storage_service_s3_multipartcopymaxconcurrency: 100
+harbor_storage_service_s3_multipartcopythresholdsize: 33554432
+harbor_storage_service_s3_region: ''
+harbor_storage_service_s3_secretkey: ''
+harbor_storage_service_s3_secure: true
+
+##
+# JOB SERVICE
+#
+harbor_jobservice_logger_sweeper_duration: 10
+harbor_jobservice_max_job_workers: 1
+
+##
+# NOTIFICATION
+#
+harbor_notification_webhook_job_http_client_timeout: 3
+harbor_notification_webhook_job_max_retry: 3
+
+##
+# LOG
+#
+harbor_log_level: info
+harbor_log_local_location: /var/log/harbor
+harbor_log_local_rotate_count: 10
+harbor_log_local_rotate_size: 200M
+
+##
+# EXTERNAL DATABASE
+#
+harbor_external_database_enabled: false
+harbor_external_database_harbor_db_name: harbor
+harbor_external_database_harbor_host: ''
+harbor_external_database_harbor_max_idle_conns: 100
+harbor_external_database_harbor_max_open_conns: 900
+harbor_external_database_harbor_password:
+harbor_external_database_harbor_port: 5432
+harbor_external_database_harbor_ssl_mode: disable
+harbor_external_database_harbor_username: ''
+
+##
+# EXTERNAL REDIS
+#
+harbor_external_redis_enabled: false
+harbor_external_redis_host: ''
+harbor_external_redis_jobservice_db_index: 2
+harbor_external_redis_registry_db_index: 1
+
+##
+# PROXY
+#
+harbor_proxy_components: ['core', 'jobservice', 'trivy']
+harbor_proxy_http_proxy: ''
+harbor_proxy_https_proxy: ''
+harbor_proxy_no_proxy: ''
+
+##
+# METRIC
+#
+harbor_metric_enabled: false
+harbor_metric_path: /metrics
+harbor_metric_port: 9090
+
+##
+# UPLOAD PURGIN
+#
+harbor_upload_purgin_age: 168h
+harbor_upload_purgin_dryrun: false
+harbor_upload_purgin_enabled: true
+harbor_upload_purgin_interval: 24h
+
+##
+# CACHE
+#
+harbor_cache_enabled: true
+harbor_cache_expire_hours: 24
+
+##
+# HARBOR CUSTOM
+#
+harbor_custom_properties: {}

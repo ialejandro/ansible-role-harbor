@@ -1,0 +1,17 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: harbor
+  author: ialejandro
+  description: Harbor
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.10
+  platforms:
+    - name: Amazon
+      versions:
+        - all
+  galaxy_tags:
+    - harbor
+    - development
+    - packaging

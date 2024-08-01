@@ -1,0 +1,26 @@
+---
+- name: Create Harbor directory
+  file:
+    path: "{{ harbor_installation_dir }}"
+    state: directory
+    owner: root
+    group: root
+
+- name: Unarchive a harbor v{{ harbor_version_release }} on {{ harbor_installation_dir }}
+  unarchive:
+    src: "https://github.com/goharbor/harbor/releases/download/v{{ harbor_version_release }}/harbor-online-installer-v{{ harbor_version_release }}.tgz"
+    dest: "{{ harbor_installation_dir }}"
+    remote_src: yes
+    owner: root
+    group: root
+    extra_opts: [--strip-components=1]
+
+- name: Deploy Harbor config
+  template:
+    src: harbor.yml.j2
+    dest: "{{ harbor_installation_dir }}/harbor.yml"
+    owner: root
+    group: root
+
+- name: Running up Harbor
+  shell: "{{ harbor_installation_dir }}/install.sh"
