@@ -1,25 +1,33 @@
 ---
-name: Linter
+name: Molecule
 
 on:
   pull_request:
   push:
     branches:
       - main
-  schedule:
-    - cron: "0 0 * * 0"
 
 defaults:
   run:
     working-directory: 'ialejandro.harbor'
 
 jobs:
-  lint:
-    name: Lint
+  molecule:
+    name: Molecule - ${{ matrix.distro }}
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - amazonlinux2023
+          - debian12
+          - ubuntu2204
+          - ubuntu2404
+          - rockylinux9
 
     steps:
       - name: Check out the codebase
@@ -32,11 +40,10 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install linters
-        run: pip3 install yamllint ansible-lint
+      - name: Install dependencies
+        run: pip3 install ansible molecule molecule-plugins[docker]
 
-      - name: Run yamllint
-        run: yamllint .
-
-      - name: Run ansible-lint
-        run: ansible-lint .
+      - name: Run Molecule tests
+        run: molecule test
+        env:
+          MOLECULE_DISTRO: ${{ matrix.distro }}

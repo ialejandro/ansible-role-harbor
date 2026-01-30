@@ -4,14 +4,26 @@ dependencies: []
 galaxy_info:
   role_name: harbor
   author: ialejandro
-  description: Harbor
+  description: Install and configure Harbor container image registry
   license: "license (BSD, MIT)"
-  min_ansible_version: 2.10
+  min_ansible_version: "2.10"
   platforms:
     - name: Amazon
       versions:
         - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: EL
+      versions:
+        - all
   galaxy_tags:
     - harbor
+    - docker
+    - registry
+    - containers
     - development
     - packaging
