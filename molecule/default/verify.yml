@@ -1,0 +1,107 @@
+---
+- name: Verify
+  hosts: all
+
+  vars:
+    harbor_installation_dir: /opt/harbor
+
+  tasks:
+    - name: Check Harbor directory exists
+      ansible.builtin.stat:
+        path: "{{ harbor_installation_dir }}"
+      register: harbor_dir
+
+    - name: Assert Harbor directory exists
+      ansible.builtin.assert:
+        that:
+          - harbor_dir.stat.exists
+          - harbor_dir.stat.isdir
+          - harbor_dir.stat.mode == '0755'
+        fail_msg: "Harbor directory does not exist or has wrong permissions"
+
+    - name: Check Harbor installer script exists
+      ansible.builtin.stat:
+        path: "{{ harbor_installation_dir }}/install.sh"
+      register: harbor_install_script
+
+    - name: Assert Harbor installer script exists
+      ansible.builtin.assert:
+        that:
+          - harbor_install_script.stat.exists
+          - harbor_install_script.stat.mode == '0755'
+        fail_msg: "Harbor install.sh does not exist or is not executable"
+
+    - name: Check Harbor config file exists
+      ansible.builtin.stat:
+        path: "{{ harbor_installation_dir }}/harbor.yml"
+      register: harbor_config
+
+    - name: Assert Harbor config file exists
+      ansible.builtin.assert:
+        that:
+          - harbor_config.stat.exists
+          - harbor_config.stat.mode == '0640'
+        fail_msg: "Harbor config file does not exist or has wrong permissions"
+
+    - name: Read Harbor config
+      ansible.builtin.slurp:
+        src: "{{ harbor_installation_dir }}/harbor.yml"
+      register: harbor_config_content
+
+    - name: Parse Harbor config
+      ansible.builtin.set_fact:
+        harbor_parsed_config: "{{ harbor_config_content.content | b64decode | from_yaml }}"
+
+    - name: Assert Harbor config contains expected values
+      ansible.builtin.assert:
+        that:
+          - harbor_parsed_config.hostname == 'harbor.molecule.test'
+          - harbor_parsed_config.external_url == 'http://harbor.molecule.test'
+          - harbor_parsed_config.http.port == 80
+          - harbor_parsed_config.data_volume == '/data'
+          - harbor_parsed_config.harbor_admin_password == 'MoleculeTestPassword123'
+        fail_msg: "Harbor config does not contain expected values"
+
+    - name: Assert Harbor config contains log section
+      ansible.builtin.assert:
+        that:
+          - harbor_parsed_config.log is defined
+          - harbor_parsed_config.log.level == 'info'
+          - harbor_parsed_config.log.local.location == '/var/log/harbor'
+          - harbor_parsed_config.log.local.rotate_count == 10
+        fail_msg: "Harbor config log section is missing or incorrect"
+
+    - name: Assert Harbor config contains storage_service section
+      ansible.builtin.assert:
+        that:
+          - harbor_parsed_config.storage_service is defined
+          - harbor_parsed_config.storage_service.cache.layerinfo == 'redis'
+          - harbor_parsed_config.storage_service.delete.enabled | bool
+        fail_msg: "Harbor config storage_service section is missing or incorrect"
+
+    - name: Assert Harbor config contains jobservice section
+      ansible.builtin.assert:
+        that:
+          - harbor_parsed_config.jobservice is defined
+          - harbor_parsed_config.jobservice.max_job_workers == 1
+        fail_msg: "Harbor config jobservice section is missing or incorrect"
+
+    - name: Assert Harbor config contains proxy section
+      ansible.builtin.assert:
+        that:
+          - harbor_parsed_config.proxy is defined
+          - "'core' in harbor_parsed_config.proxy.components"
+          - "'jobservice' in harbor_parsed_config.proxy.components"
+          - "'trivy' in harbor_parsed_config.proxy.components"
+        fail_msg: "Harbor config proxy section is missing or incorrect"
+
+    - name: Check Harbor template file exists
+      ansible.builtin.stat:
+        path: "{{ harbor_installation_dir }}/harbor.yml.tmpl"
+      register: harbor_template
+
+    - name: Assert Harbor template file exists (from archive)
+      ansible.builtin.assert:
+        that:
+          - harbor_template.stat.exists
+        fail_msg: "Harbor template file (harbor.yml.tmpl) was not extracted from archive"
