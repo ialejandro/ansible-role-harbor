@@ -1,26 +1,37 @@
 ---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - harbor_hostname is defined and harbor_hostname | length > 0
+      - harbor_external_url is defined and harbor_external_url | length > 0
+      - harbor_admin_password is defined and harbor_admin_password | length > 0
+    fail_msg: "Required variables harbor_hostname, harbor_external_url, and harbor_admin_password must be set."
+    quiet: true
+
 - name: Create Harbor directory
-  file:
+  ansible.builtin.file:
     path: "{{ harbor_installation_dir }}"
     state: directory
-    owner: root
-    group: root
+    owner: "{{ harbor_user }}"
+    group: "{{ harbor_user }}"
+    mode: '0755'
 
-- name: Unarchive a harbor v{{ harbor_version_release }} on {{ harbor_installation_dir }}
-  unarchive:
+- name: Unarchive Harbor
+  ansible.builtin.unarchive:
     src: "https://github.com/goharbor/harbor/releases/download/v{{ harbor_version_release }}/harbor-online-installer-v{{ harbor_version_release }}.tgz"
     dest: "{{ harbor_installation_dir }}"
-    remote_src: yes
-    owner: root
-    group: root
+    remote_src: true
+    owner: "{{ harbor_user }}"
+    group: "{{ harbor_user }}"
     extra_opts: [--strip-components=1]
+    creates: "{{ harbor_installation_dir }}/harbor.yml.tmpl"
 
 - name: Deploy Harbor config
-  template:
+  ansible.builtin.template:
     src: harbor.yml.j2
     dest: "{{ harbor_installation_dir }}/harbor.yml"
-    owner: root
-    group: root
-
-- name: Running up Harbor
-  shell: "{{ harbor_installation_dir }}/install.sh"
+    owner: "{{ harbor_user }}"
+    group: "{{ harbor_user }}"
+    mode: '0640'
+  no_log: true
+  notify: Run Harbor installer

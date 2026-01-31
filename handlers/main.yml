@@ -1,0 +1,6 @@
+---
+- name: Run Harbor installer
+  ansible.builtin.command: "{{ harbor_installation_dir }}/install.sh"
+  changed_when: true
+  when: harbor_run_installer | bool
+  ignore_errors: "{{ ansible_check_mode }}"

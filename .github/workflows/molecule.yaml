@@ -1,0 +1,51 @@
+---
+name: Molecule
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+defaults:
+  run:
+    working-directory: 'ialejandro.harbor'
+
+jobs:
+  molecule:
+    name: Molecule - ${{ matrix.distro }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - amazonlinux2023
+          - debian12
+          - ubuntu2204
+          - ubuntu2404
+          - rockylinux9
+
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+        with:
+          path: 'ialejandro.harbor'
+
+      - name: Set up Python3
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: '3.13' # Can't go to 3.14+ until Ansible 13.x
+
+      - name: Install dependencies
+        run: pip3 install ansible molecule molecule-plugins[docker]
+
+      - name: Run Molecule tests
+        run: molecule test
+        env:
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'

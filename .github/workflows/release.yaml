@@ -1,0 +1,45 @@
+---
+name: Release ansible-role-harbor
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tasks/**'
+      - 'handlers/**'
+      - 'defaults/**'
+      - 'vars/**'
+      - 'templates/**'
+      - 'filter_plugins/**'
+      - 'meta/**'
+
+jobs:
+  release:
+    name: Create tag release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90  # v6.0.0
+        id: semantic_release
+        with:
+          dry_run: false
+          branch: main
+          tag_format: ${version}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}

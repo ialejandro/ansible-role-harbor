@@ -1,0 +1,23 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts.os_family == 'Debian'
+
+    - name: Ensure tar is installed
+      ansible.builtin.package:
+        name: tar
+        state: present
+
+  roles:
+    - role: ialejandro.harbor
+      harbor_hostname: "harbor.molecule.test"
+      harbor_external_url: "http://harbor.molecule.test"
+      harbor_admin_password: "MoleculeTestPassword123"
+      harbor_installation_dir: /opt/harbor
+      harbor_run_installer: false

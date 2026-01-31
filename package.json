@@ -1,0 +1,14 @@
+{
+  "name": "ansible-role-harbor",
+  "version": "1.0.0",
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "repositoryUrl": "https://github.com/ialejandro/ansible-role-harbor.git",
+    "plugins": [
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
+  }
+}

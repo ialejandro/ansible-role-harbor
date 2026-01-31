@@ -1,0 +1,15 @@
+# Python
+__pycache__
+filter_plugins/__pycache__/
+*.py[oc]
+*.egg-info
+
+# Ansible
+*.retry
+
+# Molecule
+molecule/**/.__*
+
+# Claude
+CLAUDE.md
+.claude/

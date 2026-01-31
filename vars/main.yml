@@ -23,7 +23,7 @@ harbor_configuration:
             age: "{{ harbor_storage_service_maintenance_uploadpurging_age }}"
             dryrun: "{{ harbor_storage_service_maintenance_uploadpurging_dryrun }}"
             enabled: "{{ harbor_storage_service_maintenance_uploadpurging_enabled }}"
-            internal: "{{ harbor_storage_service_maintenance_uploadpurging_internal }}"
+            interval: "{{ harbor_storage_service_maintenance_uploadpurging_interval }}"
         redirect:
           disable: "{{ harbor_storage_service_redirect_disable }}"
         s3:
@@ -65,7 +65,7 @@ harbor_configuration:
           db_name: "{{ harbor_external_database_harbor_db_name }}"
           host: "{{ harbor_external_database_harbor_host }}"
           max_idle_conns: "{{ harbor_external_database_harbor_max_idle_conns }}"
-          max_open_conns: "{{ harbor_external_database_harbor_max_open_conns | default('900') }}"
+          max_open_conns: "{{ harbor_external_database_harbor_max_open_conns }}"
           password: "{{ harbor_external_database_harbor_password }}"
           port: "{{ harbor_external_database_harbor_port }}"
           ssl_mode: "{{ harbor_external_database_harbor_ssl_mode }}"
@@ -92,14 +92,14 @@ harbor_configuration:
         enabled: "{{ harbor_metric_enabled }}"
         path: "{{ harbor_metric_path }}"
         port: "{{ harbor_metric_port }}"
-  upload_purgin:
-    enabled: "{{ harbor_upload_purgin_enabled }}"
+  upload_purging:
+    enabled: "{{ harbor_upload_purging_enabled }}"
     properties:
-      upload_purgin:
-        age: "{{ harbor_upload_purgin_age }}"
-        dryrun: "{{ harbor_upload_purgin_dryrun }}"
-        enabled: "{{ harbor_upload_purgin_enabled }}"
-        interval: "{{ harbor_upload_purgin_interval }}"
+      upload_purging:
+        age: "{{ harbor_upload_purging_age }}"
+        dryrun: "{{ harbor_upload_purging_dryrun }}"
+        enabled: "{{ harbor_upload_purging_enabled }}"
+        interval: "{{ harbor_upload_purging_interval }}"
   cache:
     enabled: "{{ harbor_cache_enabled }}"
     properties:
