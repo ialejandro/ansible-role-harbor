@@ -42,6 +42,7 @@ jobs:
           LATEST_VERSION: ${{ steps.harbor_release.outputs.latest_version }}
         run: |
           sed -i "s/^harbor_version_release:.*/harbor_version_release: ${LATEST_VERSION}/" defaults/main.yml
+          sed -i "s/^harbor_version_config:.*/harbor_version_config: $(echo ${LATEST_VERSION} | sed 's/\.[0-9]*$/.0/')/" defaults/main.yml
 
       - name: Create Pull Request
         if: steps.harbor_release.outputs.update_needed == 'true'
