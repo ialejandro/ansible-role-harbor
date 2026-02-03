@@ -42,6 +42,7 @@ jobs:
           LATEST_VERSION: ${{ steps.harbor_release.outputs.latest_version }}
         run: |
           sed -i "s/^harbor_version_release:.*/harbor_version_release: ${LATEST_VERSION}/" defaults/main.yml
+          sed -i "s/^harbor_version_config:.*/harbor_version_config: $(echo ${LATEST_VERSION} | sed 's/\.[0-9]*$/.0/')/" defaults/main.yml
 
       - name: Create Pull Request
         if: steps.harbor_release.outputs.update_needed == 'true'
@@ -49,13 +50,13 @@ jobs:
         with:
           token: ${{ secrets.PAT_GITHUB }}
           commit-message: "chore(deps): bump harbor from ${{ steps.harbor_release.outputs.current_version }} to ${{ steps.harbor_release.outputs.latest_version }}"
-          title: "chore(deps): bump harbor from ${{ steps.harbor_release.outputs.current_version }} to ${{ steps.harbor_release.outputs.latest_version }}"
+          title: "fix(deps): bump harbor from ${{ steps.harbor_release.outputs.current_version }} to ${{ steps.harbor_release.outputs.latest_version }}"
           body: |
             Automated Harbor version bump.
 
             - **Current version**: ${{ steps.harbor_release.outputs.current_version }}
             - **New version**: ${{ steps.harbor_release.outputs.latest_version }}
             - **Release**: https://github.com/goharbor/harbor/releases/tag/v${{ steps.harbor_release.outputs.latest_version }}
-          branch: "chore/harbor-${{ steps.harbor_release.outputs.latest_version }}"
+          branch: "fix/harbor-${{ steps.harbor_release.outputs.latest_version }}"
           labels: enhancement,dependency-management
           assignees: ialejandro
