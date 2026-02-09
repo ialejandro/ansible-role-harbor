@@ -2,8 +2,8 @@
 ###
 # GENERAL
 #
-harbor_version_release: 2.8.2
-harbor_version_config: 2.8.0
+harbor_version_release: 2.14.2
+harbor_version_config: 2.14.0
 harbor_installation_dir: /etc/harbor
 harbor_http_port: 80
 harbor_admin_password: ''
