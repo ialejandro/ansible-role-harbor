@@ -14,7 +14,7 @@ platforms:
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
-    environment:
+    env:
       container: docker
 
 provisioner:
