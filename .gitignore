@@ -10,6 +10,9 @@ filter_plugins/__pycache__/
 # Molecule
 molecule/**/.__*
 
+# Local role symlink for ansible-galaxy/molecule resolution
+.ansible/
+
 # Claude
 CLAUDE.md
 .claude/
