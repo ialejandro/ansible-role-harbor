@@ -17,8 +17,11 @@
     mode: '0755'
 
 - name: Unarchive Harbor
+  vars:
+    _harbor_arch: "{{ 'arm64' if ansible_facts.architecture in ['aarch64', 'arm64'] else 'amd64' }}"
   ansible.builtin.unarchive:
-    src: "https://github.com/goharbor/harbor/releases/download/v{{ harbor_version_release }}/harbor-online-installer-v{{ harbor_version_release }}.tgz"
+    # Harbor >= 2.16 only ships per-arch offline installers (no online installer).
+    src: "https://github.com/goharbor/harbor/releases/download/v{{ harbor_version_release }}/harbor-offline-installer-v{{ harbor_version_release }}-{{ _harbor_arch }}.tgz"
     dest: "{{ harbor_installation_dir }}"
     remote_src: true
     owner: "{{ harbor_user }}"
