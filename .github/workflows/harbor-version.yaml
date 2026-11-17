@@ -24,13 +24,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          LATEST_VERSION=$(gh api repos/goharbor/harbor/releases/latest --jq '.tag_name' | sed 's/^v//')
+          # /releases/latest returns the last one published, not the highest: a 2.15.x patch can follow 2.16.0.
+          LATEST_VERSION=$(gh api repos/goharbor/harbor/releases --paginate \
+            --jq '.[] | select(.prerelease == false and .draft == false) | .tag_name' \
+            | sed 's/^v//' | sort -V | tail -1)
           echo "latest_version=${LATEST_VERSION}" >> "$GITHUB_OUTPUT"
 
           CURRENT_VERSION=$(grep '^harbor_version_release:' defaults/main.yml | awk '{print $2}')
           echo "current_version=${CURRENT_VERSION}" >> "$GITHUB_OUTPUT"
 
-          if [ "${LATEST_VERSION}" != "${CURRENT_VERSION}" ]; then
+          # Only bump when latest is strictly higher: never downgrade.
+          if [ "${LATEST_VERSION}" != "${CURRENT_VERSION}" ] \
+            && [ "$(printf '%s\n%s\n' "${CURRENT_VERSION}" "${LATEST_VERSION}" | sort -V | tail -1)" = "${LATEST_VERSION}" ]; then
             echo "update_needed=true" >> "$GITHUB_OUTPUT"
           else
             echo "update_needed=false" >> "$GITHUB_OUTPUT"
